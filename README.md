@@ -1,1 +1,1 @@
-# STAT184
+# STAT184 - Introduction to R

@@ -1,0 +1,154 @@
+
+---
+title: "Activity: Bird Species"
+author: "Your Names Here"
+date: ""
+output: html_notebook
+---
+
+
+# Set Up
+
+```{r}
+# Load `tidyverse` and `DataComputing` packages
+
+
+
+
+# Load the `OrdwayBirds` data set into your RStudio environment from the `DataComputing` package
+
+
+
+
+# Show a few commands used to inspect the data set a few different ways
+
+
+
+```
+
+# Activity
+
+When you're finished with this activity, you will have a graph that shows what time of year various species appear at the Katherine Ordway Natural History Study Area in Inver Grove Heights, MN.
+
+### Step 0
+
+Before we begin, the book gives us some instructions to select a few key variables and clean up the date formatting.  Use the commands given in the book, but be sure to study the functions used so you know what is happening.  In this case, we select `SpeciesName`, `Month`, and `Day`. Then a `mutate()` command converts each variable to character, and then converts the resulting "character string" to a number.
+
+```{r}
+# Get the data table & clean up dates (see Data Computing eBook)
+
+
+
+# Inspect resulting data
+
+
+```
+
+
+
+### Step 1
+
+
+
+
+```{r}
+# unique species in original data (including mis-spellings)
+
+
+
+# unique species in the clean list
+
+
+
+```
+
+
+### Step 2
+  
+
+
+
+```{r}
+# inspect OrdwaySpeciesNames
+
+
+# inner join
+
+
+
+
+# inspect the data after the join
+
+
+```
+
+
+### Step 3
+
+We want to identify the top 5-6 bird species sighted at the Katherine Ordway Natural History Study Area.
+
+```{r}
+# count sightings by species in descending order
+
+
+
+
+# a hint on p.164 recommends displaying the top 10 species to choose our threshold
+
+
+
+# define a sightings threshold; produce a table with only birds belonging to major species
+
+
+
+
+```
+
+
+### Step 4
+
+We now want to produce a month-by-month count for each of the major species, and then construct a chart to tell the story of what time of year the various species appear.
+
+```{r}
+# prepare glyph-ready data table called `ByMonth`
+
+
+
+```
+
+Now, using `barGraphHelper()` in the console, we can configure a reasonable graph and choose "show expression" to get `ggplot2` that can be embedded in our report.
+
+
+
+```{r}
+# ggplot command
+
+
+
+```
+
+According to the graph, we can answer the questions posed:
+
+##### 1. Which species are present year-round?  
+
+
+
+##### 2. Which species are migratory, that is, primarily present in one or two seasons?
+
+
+
+
+##### 3. What is the peak month for each major species? (bullet list)
+
+
+
+
+##### 4. Which major species are seen in good numbers for at least 6 months of the year?
+
+
+
+```{r}
+
+```
+
+

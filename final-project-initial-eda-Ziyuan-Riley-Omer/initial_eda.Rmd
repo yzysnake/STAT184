@@ -1,0 +1,148 @@
+---
+title: "Final Project: Initial Exploratory Data Analysis (EDA)"
+author: "Omer Canca, Riley Blake, ZiyuanYe"
+date: "November 19 2021"
+output: html_notebook
+---
+
+## Clearing workspace
+```{r}
+# Load `tidyverse` and `dcData` packages
+rm(list = ls())     # clean up your R environment
+```
+
+# load packages
+```{r}
+library(tidyverse) 
+library(dplyr)
+library(rvest)
+library(ggplot2)
+library(ggformula)
+```
+
+
+## **Guiding Question (i.e., Research Question)**: 
+What is a good predictor for car and motorcycle price?
+
+
+## Primary Data Source: 
+
+### Origin
+
+Who: Data was obtained by Eleanor Xu
+What: Sample of Car Data including multiple variables such as make, which tells us the make of the car. Year tells us what year the motorcycle was released.
+When: The data was collected 5 years ago.
+Where: The data was obtained from multiple open source datasets
+Why: To analyze car prices and its variables.
+How: Creators used Python
+
+
+URL: https://www.kaggle.com/jingbinxu/sample-of-car-data
+```{r}
+Cars <- read.csv("car_data.csv")
+```
+
+### Examining Variables: 
+```{r}
+ls(Cars)
+```
+There are 22 variables include make, fuel type, aspiration, number of doors, body style, drive wheels, engine location, wheel base, length, width, height, curb weight, engine type, num of cylinders, engine size, fuel system, compression ratio, horsepower, peak rpm, city mpg, highway mpg, and price. We will mainly focus on fuel type, number of doors, number of cylinders, horsepower, and price.
+
+#### Key Variables
+Categorical Examples: make, num_of_doors, fuel_type
+Quantitative Examples: highway_mpg, price, city_mpg, horsepower
+
+#### Graphing some of our key variables
+```{r}
+CarSample <- 
+  Cars %>% 
+  drop_na()
+
+CarSample <- Cars[sample(nrow(Cars), size=30), ]#Random Sample
+
+ggplot(data = CarSample, aes(x = highway_mpg, y = price, color = make)) + geom_point() #highway_mpg, price, make
+
+ggplot(data = CarSample, aes(x = horsepower, y = price, color = num_of_doors)) + geom_point() #horsepower, price, number of doors
+
+ggplot(data = CarSample, aes(x = city_mpg, y = price, color = drive_wheels)) + geom_point() #city_mpg, price, drive_wheels
+```
+### Features that Influence Modeling Decision
+```{r}
+CarModel <- lm(price ~ highway_mpg, data = CarSample) ##sample model
+summary(CarModel)
+
+plot(CarModel)
+```
+#### Outliers
+Our plots tell us that there are a couple outliers. However, in most datasets where we are comparing prices of things, there will be a tail when the price rises. Therefore, we may have to cutoff the price at a certain point in order to account for influential points.
+
+### Addressing our Research Question
+```{r}
+summary(CarModel)
+```
+
+According to our EDA, the best variables to predict price will probably be the kinds of mpg and the horsepower. As these rise, the price also does. Also, the low p-value in the sample model tells us that highway mpg is a valid predictor for price. Make will also play an important role because luxury brands will cost more.
+
+We will have to ask what else we can add in order to make the model even stronger.
+
+
+
+## Other data source(s)
+
+### Origin
+Who: Data was obtained by Nehal Birla and 2 collaborators
+What: Sample of Motorcycle Data including multiple variables of Motorcycle such as selling_price, which tells us how much it sells for. Year tells us what year the motorcycle was released.
+When: The data was collected in 2020.
+Where: The data was obtained from multiple open source datasets
+Why: To analyze motorcycle prices
+How: Creators used Python
+
+URL: https://www.kaggle.com/nehalbirla/motorcycle-dataset
+
+```{r}
+BIKE.DETAILS <- read.csv("BIKE DETAILS.csv")
+```
+
+```{r}
+head(BIKE.DETAILS)
+```
+
+### Examining Variables: 
+```{r}
+ls(BIKE.DETAILS)
+```
+#### Key Variables
+Categorical Examples: owner, name, seller_type, Model
+Quantitative Examples: km_driven, year, ex_showroom_price, selling_price
+
+
+#### Graphing some of our key variables
+```{r}
+BikeSample <- BIKE.DETAILS[sample(nrow(BIKE.DETAILS), size=20), ]#Random Sample
+
+  ggplot(data = BikeSample, aes(x = year, y = selling_price, color = name)) + geom_point() #year and Price and Make
+
+ggplot(data = BikeSample, aes(x = km_driven, y = selling_price, color = owner)) + geom_point() #mileage and Price and owner
+```
+
+### Features that Influence Modeling Decision
+```{r}
+BikeModel <- lm(selling_price ~ year + km_driven, data = BIKE.DETAILS)
+summary(BikeModel)
+
+plot(BikeModel)
+```
+#### Outliers
+Our plots tell us that there are a couple outliers. However, in most datasets where we are comparing prices of things, there will be a tail when the price rises. Therefore, we may have to cutoff the price at a certain point in order to account for influential points.
+
+#### Mutations
+We will have to mutate the kilometer variable in order to create a miles variable. This will make it synchronous with the cars dataset.
+
+### Addressing our Research Question
+```{r}
+summary(BikeModel)
+```
+
+According to our EDA, the best variables to predict price will probably be the kinds of year and km_driven. As these rise, the price also does. Also, the low p-value in the sample model tells us that year and km_driven are both valid predictors for price. Model will also play an important role because luxury motorcycles will cost more. 
+
+We will have to ask what else we can add in order to make the model even stronger.

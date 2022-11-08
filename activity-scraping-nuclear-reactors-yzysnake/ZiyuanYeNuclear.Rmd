@@ -1,0 +1,128 @@
+
+---
+title: "Activity: scraping nuclear reactors"
+author: "Ziyuan Ye"
+date: "November 2 2021"
+output: html_notebook
+---
+
+
+# Set Up
+
+```{r}
+# Load `tidyverse` and `dcData` packages
+rm(list = ls())     # clean up your R environment
+
+# load packages
+library(tidyverse) 
+library(dcData) 
+library(dplyr)
+library(esquisse)
+library(rvest)
+
+```
+
+```{r}
+web_page <-
+  read_html("https://en.wikipedia.org/wiki/List_of_nuclear_reactors")
+Tables <-
+  web_page %>%
+  html_nodes("table")
+```
+
+
+### Step 0
+The column name is not tidy. The first row is untidy.
+```{r}
+Japan <-
+  Tables[[22]] %>%
+  html_table(fill = TRUE)
+```
+
+```{r}
+str(Japan)
+```
+
+```{r}
+names(Japan)[c(3,7)] <- c("type", "grossMW")
+```
+
+
+```{r}
+names(Japan)<- c("name", "reactor", "type","model", "status", "netMW","grossMW", "construction", "operation", "closure")
+Japan <-
+  Japan %>%
+  filter(row_number() > 1)
+```
+
+
+1 & 2.
+```{r}
+Japan <- 
+  Japan %>%
+  mutate(netMW=as.numeric(netMW))%>%
+  mutate(rossMW=as.numeric(grossMW))%>%
+  mutate(status=as.character(status))%>%
+  mutate(reactor=as.numeric(reactor))%>%
+  mutate(construction = lubridate::dmy(construction))%>%
+  mutate(operation = lubridate::dmy(operation))%>%
+  mutate(closure = lubridate::dmy(closure))
+```
+
+### Step 1
+```{r}
+Japan %>%
+ggplot() +
+ aes(x = construction, y = netMW, colour = type) +
+ geom_tile(size = 1L) +
+ scale_color_hue() +
+ theme_bw()
+```
+BWR has the largest netMW and GCR has relatively small netMW.
+
+
+### Step 2
+```{r}
+China <-
+  Tables[[10]] %>%
+  html_table(fill = TRUE)
+names(China)<- c("name", "reactor", "type","model", "status", "netMW","grossMW", "construction", "operation", "closure")
+China <-
+  China %>%
+  filter(row_number() > 1)
+China <- 
+  China %>%
+  mutate(netMW=as.numeric(netMW))%>%
+  mutate(rossMW=as.numeric(grossMW))%>%
+  mutate(status=as.character(status))%>%
+  mutate(reactor=as.numeric(reactor))%>%
+  mutate(construction = lubridate::dmy(construction))%>%
+  mutate(operation = lubridate::dmy(operation))%>%
+  mutate(closure = lubridate::dmy(closure))
+```
+  
+```{r}
+Japan <-
+  Japan %>%
+  mutate(country = "Japan")
+China <-
+  China %>%
+  mutate(country = "China")
+```
+
+
+```{r}
+China_and_Japan <- bind_rows(China, Japan, id = NULL) 
+```
+
+### Step 3
+```{r}
+Japan1 <-
+  Japan %>%
+  mutate(id = paste(name, reactor, sep = " "))
+Japan1 %>%
+  ggplot(aes(x = construction, xend = operation, y = id, yend = id)) +
+    geom_segment(aes(color = type, position = "stack")) +
+  labs(y = "Reactor Name",x = "Year")
+```
+

@@ -1,0 +1,146 @@
+
+---
+title: "Activity: Bird Species"
+author: "Ziyuan Ye"
+date: "October 12 2021"
+output: html_notebook
+---
+
+
+# Set Up
+
+```{r}
+# Load `tidyverse` and `DataComputing` packages
+
+library(dcData)
+library(tidyverse)  
+
+# Load the `OrdwayBirds` data set into your RStudio environment from the `DataCompupacting` package
+
+data("OrdwayBirds")
+
+# Show a few commands used to inspect the data set a few different ways
+
+View(OrdwayBirds)
+
+```
+
+### Step 0
+
+```{r}
+# Get the data table & clean up dates (see Data Computing eBook)
+  OrdwayBirdsnew <-
+  OrdwayBirds %>%
+  select( SpeciesName, Month, Day ) %>%
+  mutate( Month = as.numeric(as.character(Month)), 
+          Day = as.numeric(as.character(Day)))
+# Inspect resulting data
+View(OrdwayBirdsnew)
+```
+
+
+
+### Step 1
+```{r}
+# unique species in original data (including mis-spellings)
+OrdwayBirds %>%
+  summarise(count = n_distinct(SpeciesName))
+```
+
+
+```{r}
+# unique species in the clean list
+  OrdwaySpeciesNames %>%
+  summarise(count = n_distinct(SpeciesNameCleaned))
+```
+
+### Step 2
+  
+```{r}
+# inspect OrdwaySpeciesNames
+Corrected <-
+  OrdwayBirds %>%
+  inner_join( OrdwaySpeciesNames ) %>% 
+  select( Species = SpeciesNameCleaned, Month, Day ) %>%
+  na.omit()  # cleaned up the missing ones
+```
+SpeciesNames is used for matching cases. Month and Day will be added.
+
+
+### Step 3
+
+We want to identify the top 5-6 bird species sighted at the Katherine Ordway Natural History Study Area.
+
+```{r}
+# count sightings by species in descending order
+  Corrected %>% 
+  group_by(Species) %>% 
+  summarise(count=n()) %>%
+  arrange(desc(count))
+# a hint on p.164 recommends displaying the top 10 species to choose our threshold
+
+```
+
+```{r}
+# define a sightings threshold; produce a table with only birds belonging to major species
+Major <-
+Corrected %>% 
+  group_by(Species) %>% 
+  summarise(count=n()) %>%
+  arrange(desc(count)) %>%
+  head(6) %>%
+.$Species
+
+Majors <-
+  Corrected %>% 
+  filter(Species %in% Major)
+
+Majors
+```
+
+
+### Step 4
+
+We now want to produce a month-by-month count for each of the major species, and then construct a chart to tell the story of what time of year the various species appear.
+
+```{r}
+# prepare glyph-ready data table called `ByMonth`
+ByMonth <- Majors %>%
+  group_by(Species, Month) %>%
+  summarise(count = n()) %>%
+  arrange(Month)
+```
+
+
+```{r}
+# ggplot command
+ggplot(ByMonth) +
+  aes(x = Month, weight = count) +
+  geom_bar(fill = "#112446") +
+  theme_bw() +
+  facet_wrap(vars(Species))
+```
+
+According to the graph, we can answer the questions posed:
+
+##### 1. Which species are present year-round?  
+American Goldfinch and Black-capped chickadee
+
+
+##### 2. Which species are migratory, that is, primarily present in one or two seasons?
+Lincolns Sparrow and Slate-colored Junco
+
+
+##### 3. What is the peak month for each major species? (bullet list)
+* American Goldfinch: October
+* Black-capped Chickadee: November 
+* Field Sparrow: May
+* Lincolns Sparrow: October 
+* Slate-colored Junco: October 
+* Tree swallow: March
+
+
+##### 4. Which major species are seen in good numbers for at least 6 months of the year?
+American Goldfinch Black-capped Chickadee Tree swallow
+
+

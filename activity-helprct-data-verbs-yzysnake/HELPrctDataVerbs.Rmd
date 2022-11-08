@@ -1,0 +1,100 @@
+---
+title: "HELPrct (Data Verbs) Activity"
+author: "Ziyuan Ye"
+date: "Put the due date here"
+output: html_notebook
+---
+
+
+## Set Up:
+
+```{r}
+# load packages
+library(tidyverse)  # for data verbs like `group-by()` & `summarise()`
+library(mosaicData) # includes `HELPrct` data set 
+library(mosaic)     # includes `mplot()` interactive plot builder
+library(esquisse)   # includes `esquisser()` interactive plot builder
+
+
+# Load the HELPrct data from `mosaicData` into our RStudio environment
+data("HELPrct", package = "mosaicData")
+
+```
+
+
+## Data Description
+
+*TASK 1: Write a couple of sentences describing the `HELPrct` data--What is the setting for the data? What are they about?* 
+The dataset represents 453 cases of observation of adult inpatients recruited from a detoxification unit. Patients with no primary care physician were randomized to receive a multidisciplinary assessment and a brief motivational intervention or usual care, with the goal of linking them to primary medical care.
+
+## Basic Summaries with `summarise()` 
+
+*TASK 2: Produce an expression involving `summarize()` and `HELPrct` that will produce the following.*
+
+1. *number of people (cases) in `HELPrct` study*
+2. *combined total number of times in the past 6 months all the people in `HELPrct` entered a detox program (measured at baseline)* 
+3. *mean time (in days) to first use of any substance post-detox for all the people in `HELPrct`*
+
+1.
+```{r}
+HELPrct %>%
+  summarise(count = n())
+```
+2.
+```{r}
+HELPrct %>%
+  summarise(sum_times = sum(e2b, na.rm = TRUE))
+```
+3.
+```{r}
+HELPrct %>%
+  summarise(mean_times = (sum(anysubstatus, na.rm = TRUE) / n() ))
+```
+
+## Subgrouping with `group_by()` 
+
+*TASK 3: Repeat task 2 above, but calculate the results group-by-group.  Show your code and write a sentence or two about what you observe in the results for each of the following:* 
+
+1. *males versus females*
+
+```{r}
+
+```
+
+
+2. *homeless or not*
+
+```{r}
+
+```
+
+3. *substance*
+
+```{r}
+
+```
+
+4. *break down the homeless versus housed further, by sex*
+
+```{r}
+
+```
+
+5. *break down the homeless versus housed further, by substance*
+
+```{r}
+
+```
+
+
+## TASK 4:
+
+*Include one or more interesting plots of the data involving at least 3 variables per plot. Write a few sentences to explain the story that your plot tells about these data.  You can use one of the relationships that you studied in Task 2, or you can explore a different group of variables in the `HELPrct` that show something interesting.*  
+
+
+
+```{r}
+
+```
+
+

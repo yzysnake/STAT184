@@ -1,0 +1,192 @@
+---
+title: "STAT 184 Homework Exercises" 
+subtitle: "DataComputing Chapters 13 & 16"
+author: "Ziyuan Ye"
+output: html_notebook
+---
+
+## Assigned Exercises
+
+- DC Chapter 13 Exercises:  13.1, 13.2, 13.3
+- DC Chapter 16 Exercises:  16.1, 16.2
+
+## Front Matter
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(mosaic)
+library(tidyverse)
+library(esquisse)
+library(lubridate)
+library(dcData)
+data(BabyNames)
+```
+
+
+
+## Chapter 13 Exercises
+
+### Problem 13.1
+```{r}
+BabyNames %>% 
+  group_by(sex,name) %>%
+  summarise(total = sum(count)) %>%
+  filter(rank(desc(total)) <= 5) 
+```
+
+
+### Problem 13.2
+1.
+```{r}
+Table1<-
+BabyNames%>% 
+  group_by(year,name) %>%
+  summarise(YearCount = sum(count))%>%
+  mutate(Rank = rank(desc(YearCount)),
+         ranking = ifelse(Rank <=100, "Top_100","Below"))
+```
+
+```{r}
+Table1Plus<-
+Table1%>%
+  group_by(year,ranking)%>%
+  summarise(total = sum(YearCount))%>%
+  arrange(desc(year))
+Table1Plus
+```
+
+
+2.
+```{r}
+Table2<-
+  Table1Plus%>%
+  pivot_wider(names_from=ranking,values_from = total)%>%
+  mutate(ratio = (Top_100)/(Top_100+Below))
+Table2
+```
+
+
+3.
+```{r}
+ggplot(Table2) +
+ aes(x = ratio, y = year) +
+ geom_point(size = 1L, colour = "#0c4c8a") +
+  labs(x = ' fraction of babies in the top 100', title = ' Fraction of babies with names in the top 100 each year.')+
+ theme_bw()
+```
+
+
+### Problem 13.3
+```{r}
+PopularName<-
+BabyNames %>% 
+  group_by(year,name) %>%
+  summarise(YearCount = sum(count)) %>%
+  mutate(Rank = rank(desc(YearCount)),
+         ranking = ifelse(Rank <=50, "very popular",ifelse(Rank >=1000,"very unpopular","normal")))
+PopularName
+```
+
+```{r}
+VeryPopularName <-
+  PopularName %>%
+  filter(ranking == 'very popular') %>%
+  select(name)
+```
+
+```{r}
+VeryunPopularName <-
+  PopularName %>%
+  filter(ranking == 'very unpopular') %>%
+  select(name)
+```
+
+```{r}
+specialName<-
+  VeryPopularName%>%
+  inner_join(VeryunPopularName, by=c("name"="name")) %>%
+  distinct(name) %>%
+  select(name)
+specialName
+```
+
+## Chapter 16 Exercises
+
+
+### Problem 16.1
+1.
+```{r}
+lubridate::mdy("April 30, 1777")
+```
+
+```{r}
+difftime("2000-12-18",lubridate::mdy("April 30, 1777"),units = "days")
+```
+
+2.
+```{r}
+lubridate::mdy("06-23-1912")
+```
+
+```{r}
+difftime("2000-12-18",lubridate::mdy("06-23-1912"),units = "days")
+```
+
+3.
+```{r}
+lubridate::dmy("3 March 1847")
+```
+
+```{r}
+difftime("2000-12-18",lubridate::dmy("3 March 1847"),units = "days")
+```
+
+4.
+```{r}
+lubridate::mdy_hm("Nov. 11th, 1918 at 11:00 am")
+```
+
+```{r}
+difftime("2000-12-18",lubridate::mdy_hm("Nov. 11th, 1918 at 11:00 am"),units = "days")
+```
+
+5.
+```{r}
+lubridate::mdy("July 20, 1969")
+```
+
+```{r}
+difftime("2000-12-18",lubridate::mdy("July 20, 1969"),units = "days")
+```
+
+
+### Problem 16.3
+1.
+“42,659.30” only readr::parse_number()
+
+2.
+“17%” only readr::parse_number() 
+
+3.
+“Nineteen” neither 
+
+4.
+“£100” only readr::parse_number() 
+
+5.
+“9.8 m/seconds-square” only readr::parse_number() 
+
+6.
+“9.8 m/s^2” only readr::parse_number() 
+
+7.
+“6.62606957 × 10^-34 m2 kg / s” neither 
+
+8.
+“6.62606957e-34” both 
+
+9.
+“42.659,30” (A European style) only readr::parse_number()

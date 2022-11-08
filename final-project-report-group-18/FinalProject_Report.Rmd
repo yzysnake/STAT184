@@ -1,0 +1,215 @@
+---
+title: "Final Project Report"
+author: "Omer Canca, Riley BLake, Ziyuan Ye"
+date: "Due: December 15, 2021"
+output: html_notebook
+---
+## Clearing workspace and loading packages
+```{r}
+rm(list = ls())     # clean up your R environment
+
+library(tidyverse) 
+library(dplyr)
+library(rvest)
+library(ggplot2)
+library(ggformula)
+library(stringr)
+```
+
+
+## Guiding Question: 
+What variables show a relationship with price of cars and motorcycles?
+
+
+## Data Access
+We begin by reading in the data files. Our first data file contains data regarding the price of cars and other variables such as make, fuel type, and doors. This data was posted by Eleanor Xu who posted it on Kaggle using Python. It was obtained 5 years ago from multiple open source datasets to analyze car prices and its variables. The “car_data.csv” records over 200 samples of brand new cars with 22 valued features including make, fuel type, horse power, price, etc.
+Data Link: URL: https://www.kaggle.com/jingbinxu/sample-of-car-data
+
+Our second data file was gathered from Kaggle as well. It was posted by Nehal Birla who obtained it from multiple open source datasets in order to analyze motorcycle prices. She collected the data in 2020. It contains variables such as selling price, year, and seller type.
+URL: https://www.kaggle.com/nehalbirla/motorcycle-dataset
+
+### Load data
+```{r}
+#Reading in our files
+Cars <- read.csv("car_data.csv")
+Bike <- read.csv("BIKE.csv")
+```
+
+
+### Check data
+Viewing our datasets' head and tail
+```{r}
+head(Cars)
+```
+
+```{r}
+tail(Cars)
+```
+
+```{r}
+head(Bike)
+```
+
+```{r}
+tail(Bike)
+```
+
+Analyzing our variables for Cars
+```{r}
+ls(Cars)
+```
+
+Analyzing our variables for Bike
+```{r}
+ls(Bike)
+```
+
+Analyzing our variable types for Cars
+```{r}
+str(Cars)
+```
+
+Analyzing our variable types for Bike
+```{r}
+str(Bike)
+```
+
+
+## Data Wrangling
+
+### Convert owner's data type (regular expression)
+
+```{r}
+Bike <-
+  Bike %>%
+    mutate(owner = gsub(pattern = "[st,nd,rd,th]|owner", replacement = "", owner))
+```
+
+```{r}
+Bike$owner <- as.numeric(as.character(Bike$owner))
+```
+
+check if it works
+```{r}
+str(Bike)
+```
+Find Average number of owners
+```{r}
+mean(Bike$owner)
+```
+The average number of owners for the bike dataset is 1.14 owners.
+
+###Finding the square inches of cars(user-defined function)
+We were interested in how the size of the cars contributed to the price of the cars. We used the below code to both calculate the square inches of the cars by multiplying the lenght by the width by the height, and then converted the inches to ft and calculated the square footage of the cars. The square footage, square inches, length in feet, width in feet, and height in feet were all added as columns to the object "Cars".
+###Finding the square inches of cars(user-defined function)
+```{r}
+sqr_length <- function(a,b,c){
+  (a*b*c)
+}
+
+Cars$square_inches <- sqr_length(Cars$length,Cars$width,Cars$height)
+
+intoft <- function(a){
+  (a/12)
+}
+
+Cars$length_ft <- intoft(Cars$length)
+Cars$width_ft <- intoft(Cars$width)
+Cars$height_ft <- intoft(Cars$height)
+
+Cars$square_inches <- sqr_length(Cars$length_ft,Cars$width_ft,Cars$height_ft)
+Cars
+
+```
+
+
+### Prepare a subdata for brand visualization (regular expression and transfornmation function)
+
+```{r}
+Cars <- Cars[Cars$price != '?',] #we want the cases with price only
+Cars$price <- as.numeric(Cars$price)
+
+Cars <- # adjust with currency exchange rate
+  Cars %>%
+  mutate(price = 1.2*price)
+
+Make <-
+  Cars %>%
+  select(make, price) %>%
+  group_by(make) %>%
+  summarise(mean_price_New = mean(price,na.rm = T)) %>%
+  mutate(valuegroup = if_else(mean_price_New > 30000, true = "> $30k", 
+                              false = if_else(mean_price_New >15000, 
+                                              true = "$30k-$15k", 
+                                              false = "< $15k"))) %>%
+  # define price group for new cars 
+  arrange(desc(mean_price_New))
+```
+
+
+## Data Visualization
+
+### Prices in cars among different brands 
+
+```{r}
+# Bar chart displays the average car price of each brand
+MakevsPrice <-
+  ggplot(Make) +
+  aes(x = reorder(make, desc(mean_price_New)),weight = mean_price_New, fill = valuegroup) +
+  geom_bar(alpha = 0.7) + 
+  xlab("Brands") +
+  ylab("Average Price") +
+  ggtitle(label = "Vehicle Brands vs Prices of New Vehicles") +
+  theme(axis.text.x = element_text(angle = 40, hjust = 1)) +
+  theme(plot.title = element_text(hjust = 0.5))
+MakevsPrice
+```
+## Data Visualization
+
+From the plot above, we can observe that the price of the car is a strong indicator of auto price. The graph indicates 3 tiers of brands. Four European luxury brands including Jaguar, Mercedes-Benz, Porsche, and BMW have distinguishable high average price (>30k) among the brands. A few second-tier brands such as Volvo, Mercury, and Saab has lower prices (15k-30k) than the top brands good perfermance and brand reputation. The third tier brands from Mazda to Chevrolet has significantly lower prices (<15k) that are economically friendly.
+
+### Relationship between manufacturers and car/motorcycle price 
+First, we would like to see which manufacturers have the highest average price of cars and motorcycles.
+```{r}
+Cars %>%
+  mutate(price = as.numeric(price))%>%
+  group_by(make) %>%
+  summarise(AveragePrice = mean(price, na.rm = TRUE)) %>%
+  arrange(desc(AveragePrice)) %>%
+  ggplot(aes(x = AveragePrice, y = make)) + geom_point()+ ylab("Manufacturer") + xlab("Average Price of Car") + ggtitle("Average Price of Car by Manufacturer")
+
+```
+```{r}
+Bike$manufacturer <- word(Bike$name, 1) # Making a column with just the manufacturer
+Bike%>%
+  group_by(manufacturer) %>%
+  summarise(AveragePrice = mean(ex_showroom_price, na.rm = TRUE)) %>%
+  arrange(desc(AveragePrice)) %>%
+  ggplot(aes(x = AveragePrice, y = manufacturer)) + geom_point() + ylab("Manufacturer") + xlab("Average Price of Motorcycle") + ggtitle("Average Price of Motorcycle by Manufacturer")
+```
+We discover that price is highly influenced by manufacturer. 
+Top 3 most expensive manufacturers for Cars: Jaguar, Mercedes-Benz, Porsche
+Top 3 most expensive manufacturers for Motorcycles: Harley-Davidson, Kawasaki, BMW
+
+###  Relationship between Price and Seller Type and Year in Motorcycles
+Next we analyze if owner and year can influence the price of motorcycles.
+```{r}
+Bike%>%
+  ggplot(aes(x = year, y = selling_price)) + geom_point() + facet_grid( ~ seller_type)  + ylab("Price of Motorcycle") + xlab("Year of Motorcycle") + ggtitle("Price of Motorcycle by Seller Type and Year")
+```
+From this graph, we can see that as a motorcycle increases year, the price increases This is likely due to the wear that is put on an older motorcycle. Older motorcycles have a lower price while newer ones have higher ones. We cannot say that seller type can influence price. There is not information to say that it would be true. However, Year and Price have a positive linear relationship.
+
+### Relationship between kilometers driven, price, and owner in Motorcycles.
+```{r}
+Bike%>%
+  ggplot(aes(x = km_driven, y = selling_price, color = owner)) + geom_smooth() + geom_point()+ ylab("Price of Motorcycle") + xlab("Kilometers on Motorcycle") + ggtitle("Price of Motorcycle by km Driven and Seller Type") + xlim(0, 25000)+ ylim(0, 50000)
+```
+
+```{r}
+Cars%>%
+  ggplot(aes(x = square_inches, y = price)) + geom_smooth() + geom_point()+ ylab("Price of Car") + xlab("Size of Car(in)") + ggtitle("Price of Car by Size(in)")
+```
+
+#Conclusion
+We find that the following variables are good for predicting price in cars:
+We find that the following variables are good for predicting price in motorcycles:

@@ -1,0 +1,80 @@
+---
+title: "STAT 184 Homework Exercises" 
+subtitle: "DataComputing Chapters 18"
+author: "Ziyuan Ye"
+output: html_notebook
+---
+
+## Assigned Exercises
+
+- DC Chapter 18 Exercises:  18.1, 18.2
+
+## Front Matter
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(mosaic)
+library(tidyverse)
+library(dcData)
+data(NCHS)
+
+```
+
+
+
+## Chapter 18 Exercises
+
+### Problem 18.1
+1.
+living_areas, fireplaces, bathroom
+
+2.
+No, it doesn't matter
+
+3.
+The price of house with more than one bathroom(151424.497$) is larger than house with one bathroom(179796.647)
+
+4.
+When living area is greater than 2816 feet, the number of firespace matters the price. More fireplaces lead to higher price.
+
+### Problem 18.2
+```{r}
+NCHS %>%
+  na.omit() %>%
+  nrow()
+```
+
+```{r}
+CompleteCases <- 
+  NCHS %>%
+  select(diabetic, weight, age, bmi, chol, smoker) %>%
+  na.omit() 
+```
+
+1.
+```{r}
+library(party)
+mod2 <- party::ctree(diabetic ~ weight + age + bmi, data = CompleteCases)
+```
+
+2.
+```{r}
+plot(mod2, type = "simple")
+```
+
+```{r}
+CompleteCases %>%
+  mutate(probability = as.numeric(predict(mod2)), 
+         likelihood = ifelse(diabetic, probability, 1-probability)) %>%
+  summarise(log_likelihood = sum(log(likelihood)))
+```
+
+3.
+The patient whose age is less than 49 and whose bmi is greater than 35.349 has the highest risk of getting diabetes
+
+4.
+The patient whose age is less than 49 and whose bmi is less than 23 has the lowest risk of getting diabetes
+

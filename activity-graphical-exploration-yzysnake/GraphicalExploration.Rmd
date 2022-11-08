@@ -1,0 +1,81 @@
+---
+title: 'Activity: Graphical Exploration'
+author: "Ziyuan Ye"
+date: 'Due Date: September 21, 2021 '
+output:
+  html_document:
+    df_print: paged
+---
+
+
+
+## Front Matter
+
+Install supporting R packages with necessary functions and data sets.  You will need to add `library(DataComputing)` to the code chunk.  Note the line `rm(list = ls())` at the beginning of the code chunk, this will effectively reset your R environment which can help avoid bugs when an analysis gets more complicated.  
+
+
+```{r} 
+rm(list = ls())      # cleans up your R environment
+
+# load packages
+library(mosaic)
+library(tidyverse)   # loads a group of useful packages including `ggplot2`
+
+
+```
+
+
+
+### Explore the `diamonds` data
+
+*Task: Use R to produce one informative graphic of the `diamonds` data.  The graphic should represent AT LEAST 3 variables.  Write a few sentences to describe what we can learn from the graphic your have provided.  (Note: please do NOT write your narrative inside the code chunk.)*
+
+
+```{r}
+# read `diamonds` data into R; it has been provided by the `ggplot2` package
+data("diamonds", package = "ggplot2")
+
+# add your code below for your one key data visualization
+ggplot(diamonds) +
+  aes(x = carat, y = price) +
+  geom_point(shape = "circle", size = 1.5, colour = "#112446") +
+  theme_bw() +
+  facet_wrap(vars(cut))
+
+```
+
+
+The dataset represents 54000 diamonds in terms of different attributes. One case demonstrates one diamond with its attributes. For example, price means price in US dollars. Carat represents weight of the diamond. Cut represents the quality of the cut.
+My graph chooses carat, price, and cut as variables. I put carat as x-axis, price as y-axis, and cut as facet. The scatter plot graph shows the correlation between carat and price in terms of different cut. We can see the correlation is weakest while cut is fair.
+
+
+### Explore the cereal data
+
+*Task: Use R to produce one informative graphic of the `cereal.csv` data.  The graphic should represent AT LEAST 3 variables.  Write a few sentences to describe what we can learn from the graphic your have provided. (Note: please do NOT write your narrative inside the code chunk.)*
+
+
+```{r}
+# read CSV data set into R
+CerealData <- readr::read_csv(file = "cereal.csv")  
+
+# add your code below for your one key data visualization
+
+ggplot(CerealData) +
+  aes(x = calories, y = rating) +
+  geom_point(shape = "circle", size = 1.5, colour = "#112446") +
+  theme_bw() +
+  facet_wrap(vars(mfr))
+```
+
+
+The dataset represents different types of cereal in terms of nutrition data. Each case reprents a type of cereal in different variables. For example, I choose calories, the calories per serving, rating, a rating of the cereals, and mfr, the manufacture of cereal as my variables in my graph.
+I put calories as x-axis, rating as y-axis, and mfr as facet. From the scatter plot graph, I can know that the less calories cereal has, the more rating it will get whatever the manufacture it is.
+
+
+
+
+### Extension: programming style
+
+The helper functions are great, but they produce ugly code.  Clean up the `ggplot2` code that reproduces the required plots so that it aligns with the R Programming Style Guide Appendix in the *DataComputing* eBook <https://dtkaplan.github.io/DataComputingEbook/>.  
+
+

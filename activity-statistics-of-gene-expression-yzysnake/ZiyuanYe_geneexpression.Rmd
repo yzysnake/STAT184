@@ -1,0 +1,212 @@
+---
+title: "Gene Expression"
+author: "Ziyuan Ye"
+date: "November 8 2021"
+output: html_notebook
+---
+
+
+
+# Set Up
+
+```{r}
+# clean up
+rm(list = ls())
+
+# packages in use
+library(tidyverse)
+library(dcData)
+library(dplyr)
+library(esquisse)
+data(NCI60)
+data( NCI60cells)
+```
+
+```{r}
+Narrow <-
+  NCI60 %>%
+  tidyr::pivot_longer(cols = -Probe, names_to = "cellLine", values_to = "expression")
+CellTypes <-
+  NCI60cells %>%
+  select(cellLine, tissue) %>%
+  mutate(cellLine = gsub(pattern = "\\:", replacement = ".", x = as.character(cellLine)))
+Narrow <- 
+  Narrow %>%
+  inner_join(CellTypes)
+Probe_TOP3A <-
+  Narrow %>%
+  filter(Probe == "TOP3A")
+SummaryStats <-
+  Probe_TOP3A %>%
+  group_by(tissue) %>%
+  summarise(mn_expr = exp(mean(expression, na.rm = TRUE)))
+```
+
+
+# Figure 18.1
+```{r}
+SummaryStats %>% 
+  ggplot(aes(x = tissue, y = mn_expr)) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))+
+  theme_bw()
+```
+
+
+# Figure 18.2
+```{r}
+Probe_TOP3A %>% 
+ggplot(aes(x = tissue, y = exp(expression))) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))+
+  theme_bw()
+```
+
+
+# Figure 18.3
+```{r}
+SummaryStats <-  
+      SummaryStats %>%  
+      mutate(tissue = reorder(tissue, mn_expr)) 
+SummaryStats <-
+  Probe_TOP3A %>%
+  group_by(tissue) %>%
+  summarise(mn_expr = mean(expression,  na.rm = TRUE),
+            se = sd(expression, na.rm = TRUE) / sqrt(n()))
+SummaryStats %>% 
+  ggplot(aes(x = tissue, y = exp(mn_expr))) +
+  geom_bar(stat = "identity", fill = "gray", color = NA) +
+  geom_point(data = Probe_TOP3A, aes(x = tissue, y = exp(expression))) + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))+
+  theme_bw()
+```
+
+
+# Figure 18.4
+```{r}
+SummaryStats <- 
+  SummaryStats %>%
+  mutate(top = mn_expr + 2 * se,
+         bottom = mn_expr - 2 * se)
+
+SummaryStats %>%
+  ggplot(aes(x = tissue, y = exp(mn_expr))) +
+  geom_bar(stat = "identity", alpha = 0.2) +
+  geom_errorbar(aes(x = tissue, 
+                    ymax = exp(top), 
+                    ymin = exp(bottom)), width = 0.5) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))+
+  theme_bw()
+```
+
+
+# Figure 18.5
+```{r}
+SummaryStats %>%
+  ggplot(aes(x = tissue, y = exp(mn_expr))) +
+  geom_point(data = Probe_TOP3A, aes(x = tissue, y =     exp(expression)), alpha = 0.7,size = 1) + 
+  geom_errorbar(aes(x = tissue, ymax = exp(top),  ymin = exp(bottom)), width = 0.5) +
+  ylim(0,1.5)+
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))+
+  theme_bw()
+```
+  
+  
+```{r}
+r2 <- function(data) {
+  mosaic::rsquared(lm(data$expression ~ data$tissue))
+}
+```
+
+```{r}
+ProbeR2 <- 
+  Narrow %>% 
+  group_by(Probe) %>%
+  dplyr::do(probe_rsq = r2(.)) %>%
+  mutate(r2 = unlist(probe_rsq))
+Actual <-
+  ProbeR2 %>%
+  arrange(desc(r2)) %>%
+  head(30)
+```
+
+# My Turn
+```{r}
+A_24_P190631<-
+  Narrow %>% 
+  filter(Probe=="A_24_P190631")
+  SummaryStats %>%
+  ggplot(aes(x = tissue, y = exp(mn_expr))) +
+  geom_point(data = A_24_P190631, aes(x = tissue, y = exp(expression)), alpha = 0.7,size = 1) + 
+      geom_errorbar(aes(x = tissue, 
+                    ymax = exp(top), 
+                    ymin = exp(bottom)), width = 0.5) +
+  
+  ylim(0,1.5)+
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+```
+
+# Figure 18.7
+```{r}
+NullR2 <-
+  Narrow %>%
+  group_by(Probe) %>%
+  mutate(expression = mosaic::shuffle(expression)) %>%
+  group_by(Probe) %>%
+  do(r2 = r2(.)) %>%
+  mutate(r2 = unlist(r2))
+
+ProbeR2 %>%
+  ggplot(aes(x = r2)) + 
+  geom_density(fill = "gray30", color = NA) +
+  geom_density(data = NullR2, aes(x = r2), 
+               fill = "gray80", alpha = .75, color = NA)
+```
+  
+# Figure 18.8
+```{r}
+Null <-
+  NullR2 %>% 
+  arrange(desc(r2)) %>%
+  head(30) 
+Actual$null <- Null$r2
+Actual %>%
+  ggplot(aes(x = reorder(Probe, desc(r2)), y = r2)) +
+  geom_point() + 
+  geom_point(aes(y = null), color = "gray50") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+  
+  
+  
+  
+  

@@ -1,0 +1,111 @@
+---
+title: "STAT 184 Homework Exercises" 
+subtitle: "DataComputing Chapters 17"
+author: "Ziyuan Ye"
+output: html_notebook
+---
+
+## Assigned Exercises
+
+- DC Chapter 17 Exercises:  17.1, 17.3, 17.4, 17.5, 17.7
+
+## Front Matter
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(mosaic)
+library(tidyverse)
+library(lubridate)
+library(dcData)
+data(CPS85)
+data(BabyNames)
+```
+
+
+
+## Chapter 17 Exercises
+
+### Problem 17.1
+1.
+```{r}
+BabyNames %>%
+  filter( grepl( "[aeiou]$", name ), sex =="M"  ) %>% 
+  group_by(name)%>%
+  summarise(total = sum(count))%>%
+  arrange(desc(total))%>%
+  head(10)
+```
+
+2.
+```{r}
+BabyNames %>% 
+  filter(grepl(" ", name, ignore.case = TRUE)) %>%
+  group_by(name)%>%
+  summarise( total = sum(count))%>%
+  arrange(desc(total))%>%
+  head(10)
+```
+
+3.
+```{r}
+BabyNames %>% 
+  filter(grepl( "Joe$|joe$", name)) %>%
+  group_by(name)%>%
+  summarise( total = sum(count))%>%
+  arrange(desc(total))%>%
+  head(10)
+```
+
+
+### Problem 17.3
+The string looks like telephone number.Number are extracted from the strings.
+
+
+### Problem 17.4
+1.
+The length of this pattern is 2
+
+2.
+7+3+2+2+2+4+2+10+8+3+3+2+2+3+4+4=61
+
+3.
+It is the abbreviation of states’ name.
+
+
+### Problem 17.5
+```{r}
+BibleNames <- 
+  readr::read_csv("https://mdbeckman.github.io/dcSupplement/data/BibleNames.csv")
+```
+
+1.
+```{r}
+BibleNames%>%
+  filter(grepl( "bar|dam|lory", name)) 
+```
+
+2.
+```{r}
+BibleNames%>%
+  filter(grepl( "bar$|dam$|lory$", name)) 
+```
+
+
+### Problem 17.7
+```{r}
+BibleNames <- 
+  readr::read_csv("https://mdbeckman.github.io/dcSupplement/data/BibleNames.csv")
+```
+
+```{r}
+BabyNames%>%
+  inner_join(BibleNames)%>%
+  group_by(name,meaning)%>%
+  summarise( total = sum(count))%>%
+  arrange(desc(total))%>%
+  head(10)
+```
+

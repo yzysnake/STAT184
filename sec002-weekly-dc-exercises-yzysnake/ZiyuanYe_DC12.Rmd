@@ -1,0 +1,149 @@
+---
+title: "STAT 184 Homework Exercises" 
+subtitle: "DataComputing Chapters 12"
+author: "Ziyuan Ye"
+output: html_notebook
+---
+
+## Assigned Exercises
+
+- DC Chapter 12 Exercises:  12.1, 12.2, 12.3, 12.4 
+
+
+## Front Matter
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(mosaic)
+library(tidyverse)
+library(dcData)
+data(BabyNames)
+```
+
+
+
+## Chapter 12 Exercises
+
+
+### Problem 12.1
+
+1.
+```{r}
+BothSexes <-
+  BabyNames %>%
+  pivot_wider(names_from = sex, values_from = count)%>%
+  filter(M > 5 | F > 5)
+BothSexes
+```
+
+2.
+```{r}
+CLosest_Balance<-
+  BothSexes %>%
+  group_by(name) %>%
+  summarise(balance=abs(log(F / M)))%>%
+  arrange(balance)%>%
+  head(10)
+CLosest_Balance
+```
+
+3.
+```{r}
+CLosest_Balance_100babys<-
+  BothSexes %>%
+  group_by(name) %>%
+  filter(M > 100, F > 100)%>%
+  summarise(balance=abs(log(F / M)))%>%
+  arrange(balance)%>%
+  head(10)
+CLosest_Balance_100babys
+```
+
+4.
+```{r}
+CLosest_Balance_Popularity<-
+  BothSexes %>%
+  group_by(name) %>%
+  filter(M + F > 100)%>%
+  summarise(balance=abs(log(F / M)))%>%
+  arrange(balance)%>%
+  head(10)
+CLosest_Balance_Popularity
+```
+
+5.
+```{r}
+CLosest_Balance_Switch<-
+  BothSexes %>%
+  group_by(name,year) %>%
+  summarise(F_ratio = F / (F+M), M_ratio = M / (F+M))
+CLosest_Balance_Switch
+```
+
+
+
+### Problem 12.2
+
+1.
+* version1: The number of babies names “Ida, Robert, Theresa” separated by sex in 1912 and 2012.
+
+* version2: The number of female and male whose name is “Ida, Robert, Theresa” born in 1912 and 2012.
+
+* version3: The number of female born in 1912 and 2012, and the number of male born in 1912 and 2012.
+
+2.
+```{r}
+Version2<-
+BabyNames %>% 
+  filter(name == "Ida"|name =="Robert"|name =="Theresa", year == 2012|year==1912) %>%
+  group_by(name, sex, year) %>% 
+  summarise(nbabies = sum(count))%>%
+  pivot_wider(names_from = sex, values_from = nbabies, values_fill = NA)
+Version2
+```
+Version2 is wider with female and male column. By adding pivot_wider(names_from = sex, values_from = nbabies, values_fill = NA) to convert version1 to version2.
+
+3.
+```{r}
+Version3<-
+BabyNames %>% 
+  filter(name == "Ida"|name =="Robert"|name =="Theresa", year == 2012|year==1912) %>%
+  group_by(name, sex, year) %>% 
+  summarise(nbabies = sum(count))%>%
+  pivot_wider(names_from = year, values_from = nbabies, values_fill = NA)
+Version3
+```
+Version3 is wide with column year 1912 and 2012.Calculate the female with name “Ida, Rovert, or Therasa” borned in 1912, and 2012 separably. And males. Add R chain. pivot_wider(names_from = year, values_from = nbabies, values_fill = NA)
+
+4.
+Version2 is better. Female, male, and year are variables in version2. It is easier to calculate.
+
+5.
+I should convert version1 to version2 first, then calculate the ratio. Using proper table to calculate saving time and more tidy.
+
+
+### Problem 12.3
+
+1.
+* A is wider because A stores every single country as an attribute.
+* B is wider because B stores every single year as an attribute.
+* They are the same "wider" with different name_from.
+
+2.
+Table B. Using data verb summarise( change = Y2000 - Y2001).
+
+3.
+Table C. Firstly join two tables by country. Then using group_by(continent ,year) and summarise(sum = sum(value)).
+
+
+### Probelm 12.4
+
+1.
+In a narrow form, we have to store many redundant data, which is less useful for practical purpose because we might need write others data verbs before.
+
+2.
+BP_wide %>% mutate(change = after - before)%>% pivot_longer(cols = c(before,after),names_to = “when”, values_to = “sbp”).
+In this R chain, we can clearly find out the sbp difference before and after.

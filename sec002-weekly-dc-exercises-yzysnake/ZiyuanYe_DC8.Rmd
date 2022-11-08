@@ -1,0 +1,117 @@
+---
+title: "STAT 184 Homework Exercises" 
+subtitle: "DataComputing Chapters 8"
+author: "Ziyuan Ye"
+output: html_notebook
+---
+
+## Assigned Exercises
+
+- DC Chapter 8 Exercises: 8.1, 8.2, 8.3
+
+
+## Front Matter
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(mosaic)
+library(tidyverse)
+library(esquisse)
+data("CPS85",package = "mosaicData")
+
+```
+
+
+
+## Chapter 8 Exercises
+
+### Problem 8.1
+
+1. Add a layer of glyphs
+2. Add a layer of glyphs
+3. Construct a graphics frame
+4. Change the scale for the frame
+5. Set an axis label
+6. Divide the frame into facets
+7. Add a layer of glyphs
+8. Change the scale for the frame
+9. Divide the frame into facets
+
+
+### Problem 8.2
+
+1.
+```{r}
+ggplot(CPS85) +
+  aes(x = wage, fill = sex) +
+  geom_density(adjust = 1L, alpha = 0.5) +
+  scale_fill_hue(direction = 1) +
+  theme_bw() +
+  facet_wrap(vars(married))
+```
+
+2.
+```{r}
+CPS85 %>%
+ ggplot() +
+ aes(x = age, y = wage, colour = sex) +
+ geom_smooth(method="loess")+
+ scale_color_hue() +
+ theme_bw() +
+ facet_grid(married ~. )
+```
+
+3.
+```{r}
+CPS85 %>%
+ ggplot()+
+ aes(x = age, y = wage, colour = sex) +
+ geom_smooth(method="loess")+
+ scale_color_hue() +
+ theme_bw() +
+ facet_wrap(~ sector) +
+ ylim(0L, 25L)
+```
+
+
+### Problem 8.3
+1.
+```{r}
+ggplot(CPS85) +
+ aes(x = age, y = wage) +
+ geom_point(size = 1L, colour = "black") 
+```
+
+2.
+```{r}
+CPS85 %>%
+  ggplot()+
+  aes(x=age, y= wage, shape = sex)+  geom_point() + 
+  scale_shape_manual(values = c(16, 17)) + 
+  theme(legend.position = "top")
+```
+
+3.
+```{r}
+CPS85 %>%
+  ggplot()+
+  aes(x=age, y= wage, shape = sex)+  geom_point() + 
+  scale_shape_manual(values = c(16, 17)) + 
+  theme(legend.position = "top")+
+facet_grid(married ~.) 
+```
+
+4.
+```{r}
+CPS85 %>%
+  filter(wage <= 40)%>%
+  ggplot()+
+  aes(x=age, y= wage, shape = married)+  geom_point() + 
+  scale_shape_manual(values = c(16, 17)) + 
+  theme(legend.position = "top")
+```
+
+

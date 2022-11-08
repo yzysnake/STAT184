@@ -1,0 +1,109 @@
+---
+title: "HELPrct (Data Verbs) Activity"
+author: "Ziyuan Ye"
+date: "Sep 28 2021"
+output: html_notebook
+---
+
+
+## Set Up:
+
+```{r}
+# load packages
+library(tidyverse)  # for data verbs like `group-by()` & `summarise()`
+library(mosaicData) # includes `HELPrct` data set 
+library(mosaic)     # includes `mplot()` interactive plot builder
+library(esquisse)   # includes `esquisser()` interactive plot builder
+
+
+# Load the HELPrct data from `mosaicData` into our RStudio environment
+data("HELPrct", package = "mosaicData")
+
+```
+
+
+## Data Description
+
+The dataset represents 453 cases of observation of adult inpatients recruited from a detoxification unit. Patients with no primary care physician were randomized to receive a multidisciplinary assessment and a brief motivational intervention or usual care, with the goal of linking them to primary medical care.
+
+## Basic Summaries with `summarise()` 
+
+1.
+```{r}
+HELPrct %>%
+  summarise(count = n())
+```
+2.
+```{r}
+HELPrct %>%
+  summarise(sum_times = sum(e2b, na.rm = TRUE))
+```
+3.
+```{r}
+HELPrct %>%
+  summarise(mean_days = (sum(daysanysub, na.rm = TRUE) / n() ))
+```
+
+## Subgrouping with `group_by()` 
+
+*TASK 3: Repeat task 2 above, but calculate the results group-by-group.  Show your code and write a sentence or two about what you observe in the results for each of the following:* 
+
+1. *males versus females*
+
+```{r}
+HELPrct %>%
+  group_by(sex) %>%
+  summarise(count = n(), sum_times = sum(e2b, na.rm = TRUE), mean_days = (sum(daysanysub, na.rm = TRUE) / n() ) )
+```
+There are 107 female and 346 female. Female and male entered a detox program in past 6 months 89 and 447 times respectively. The mean days to first use of any substance post-detox for female and male are 44.7 and 39.3 respectively.
+
+
+2. *homeless or not*
+
+```{r}
+HELPrct %>%
+  group_by(homeless) %>%
+  summarise(count = n(), sum_times = sum(e2b, na.rm = TRUE), mean_times = (sum(daysanysub, na.rm = TRUE) / n() ) )
+```
+There are 209 homeless and 244 housed people. Homeless and hosed people entered a detox program in past 6 months 379 and 157 times respectively. The mean days to first use of any substance post-detox for homeless and housed people are 41.9 and 39.3 respectively.
+
+
+3. *substance*
+
+```{r}
+HELPrct %>%
+  group_by(substance) %>%
+  summarise(count = n(), sum_times = sum(e2b, na.rm = TRUE), mean_days = (sum(daysanysub, na.rm = TRUE) / n() ) )
+```
+There are 177 people has alcohol abuse, 152 people has cocaine abuse, and 124 people has heroin abuse. There are 237 alcohol abuse people in past 6 months entered a detox program. There are 96 cocaine abuse people in past 6 months entered a detox program. There are 203 heroin abuse people in past 6 months entered a detox program.  The mean days to first use of any substance post-detox for alcohol, cocaine, and heroin abuse people are 42.1, 50.2 ,and 26.3 respectively.
+
+
+4. *break down the homeless versus housed further, by sex*
+
+```{r}
+HELPrct %>%
+  group_by(sex, homeless) %>%
+  summarise(count = n(), sum_times = sum(e2b, na.rm = TRUE), mean_times = (sum(daysanysub, na.rm = TRUE) / n() ) )
+```
+There are 40 people female who are homeless and 67 female who are hosed people. There are 169 male who are homeless and 177 male who are hosed people. Among those people, who are male and homeless, has the most times entered a detox program. 
+
+5. *break down the homeless versus housed further, by substance*
+
+```{r}
+HELPrct %>%
+  group_by(homeless, substance) %>%
+  summarise(count = n(), sum_times = sum(e2b, na.rm = TRUE), mean_times = (sum(daysanysub, na.rm = TRUE) / n() ) )
+```
+People who have the most times entered a detox program in the past 6 months are homeless and having alcohol abuse. People who have the most mean days to first use of any substance post-detox are homeless and having cocaine abuse.    
+
+## TASK 4:
+
+```{r}
+ggplot(HELPrct) +
+  aes(x = age, y = e2b, colour = sex) +
+  geom_point(shape = "circle", size = 1.5) +
+  scale_color_hue(direction = 1) +
+  theme_bw()
+```
+The scatter plot represents number of times who entered a detox program in past 6 months in different age and sex.
+

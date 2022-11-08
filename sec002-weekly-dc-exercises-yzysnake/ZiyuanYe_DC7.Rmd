@@ -1,0 +1,225 @@
+---
+title: "STAT 184 Homework Exercises"
+subtitle: "DataComputing Chapters 7"
+author: "Ziyuan Ye "
+output: html_notebook
+---
+
+## Assigned Exercises
+
+- DC Chapter 7 Exercises: 7.1, 7.3, 7.5, 7.6, 7.7, 7.8
+
+
+## Front Matter
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(mosaic)
+library(tidyverse)
+library(dcData)
+library(dplyr)
+library(esquisse)
+library(ggplot2)
+```
+
+## Chapter 7 Exercises
+
+### Problem 7.1
+
+1.
+transformation function
+2.
+transformation function
+3.
+reduction function
+4.
+transformation function
+5.
+transformation function
+6.
+reduction function
+7.
+transformation function
+8.
+reduction function
+
+
+### Problem 7.3
+1.
+```{r}
+Minneapolis2013=(Minneapolis2013)
+Minneapolis2013 %>%
+  summarise(count = n())
+```
+
+2.
+```{r}
+Minneapolis2013 %>%
+  group_by(Second) %>%
+  summarise(count = n())%>%
+  arrange(desc(count))%>%
+  top_n(5)
+```
+
+3.
+*
+```{r}
+Minneapolis2013 %>% 
+  group_by(First) %>%
+  summarise(count = n()) %>%
+  filter(First=="undervote")
+```
+
+*
+```{r}
+Minneapolis2013 %>% 
+  group_by(Second) %>%
+  summarise(count = n()) %>%
+  filter(Second=="undervote")
+```
+
+*
+```{r}
+Minneapolis2013 %>% 
+  group_by(Third) %>%
+  summarise(count = n()) %>%
+  filter(Third=="undervote")
+```
+
+
+4.
+```{r}
+Minneapolis2013 %>%
+  group_by(First, Second) %>%
+  summarise(count = n())%>%
+  arrange(desc(count))%>%
+  top_n(3)
+```
+
+5.
+```{r}
+Minneapolis2013 %>%
+  group_by(Precinct) %>%
+  summarise(count = n())%>%
+  arrange(desc(count))%>%
+  top_n(3)
+```
+P-06, 9711 ballots
+
+
+### Problem 7.5
+
+a.
+```{r}
+VoterData_A <-
+  Minneapolis2013 %>%
+  group_by(First, Second)
+```
+The voterData has been modified by First and Second, case is voter
+
+b.
+```{r}
+VoterData_B <-
+ Minneapolis2013 %>%
+  summarise( total = n() )
+```
+It represent the total number of case in VoterData_B
+
+c.
+```{r}
+VoterData_C <-
+  Minneapolis2013 %>%
+  group_by(First, Second) %>%
+  summarise( total = n() )
+```
+It represent the total number of First and Second cases correspondingly
+
+d.
+After summarise( total = n() ) %>%, the result is an int, there is no First or Second.
+
+
+### Problem 7.6: 
+
+1.
+```{r}
+ZipGeography = (ZipGeography)
+ZipGeography %>%
+ filter(!(Timezone %in% " ") | is.na(Timezone)) %>%
+ ggplot() +
+ aes(x = Population, y = LandArea) +
+ geom_point(size = 1L, colour = "#0c4c8a") +
+ theme_minimal() +
+ facet_wrap(vars(State))
+```
+
+2.
+```{r}
+new_ZipGeography <-
+  ZipGeography %>%
+  group_by(State) %>%
+  summarise(sum_population = sum(Population, na.rm = TRUE) )
+```
+
+```{r}
+mUSMap(new_ZipGeography, key = "State", fill = "sum_population")
+```
+
+
+
+3.
+```{r}
+noval_ZipGeography <-
+  ZipGeography %>%
+  group_by(State) %>%
+  summarise(unit_area_state = (sum(LandArea, na.rm = TRUE) /sum(Population, na.rm = TRUE)) )
+```
+
+```{r}
+mUSMap(noval_ZipGeography, key = "State", fill = "unit_area_state")
+```
+
+
+### Problem 7.7: 
+
+a. 
+number and average age of female and male patient
+
+b.
+for each diagnosis result, number of patient in it and average age
+
+c.
+diagnosis: for female and male, each diagnosis result, number of patient in it and average age
+
+d.
+diagnosis: for eacha ge of patient,each diagnosis result, number of patient in it and average age
+
+e.
+number of each age patient, average age
+
+
+
+### Problem 7.8: 
+
+1.
+```{r}
+ZipDemography=(ZipDemography)
+ggplot(ZipDemography) +
+ aes(x = Foreignborn, y = SpeakalanguageotherthanEnglishathome5yearsandover) +
+ geom_point(size = 1L, colour = "#0c4c8a") +
+ labs(y = "foreign_language") +
+ theme_minimal()
+
+```
+
+
+2.
+Set Bachelorsdegreeorhigher be the y-axis, total population be the x-axis. The coefficient of slope is the fraction of people who has bachelors degree or higher, then add state as facet.
+
+
+
+
+
+

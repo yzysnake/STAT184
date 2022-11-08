@@ -1,0 +1,153 @@
+---
+title: "STAT 184 Homework Exercises" 
+subtitle: "DataComputing Chapters 5 & 6"
+author: "Ziyuan Ye "
+output: html_notebook
+---
+
+## Assigned Exercises
+
+- DC Chapter 1 Exercises: 5.1, 5.2, 5.3  
+- DC Chapter 2 Exercises: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10
+
+## Front Matter
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(tidyverse)
+library(esquisse)
+library(mosaicData)
+library(ggplot2)
+```
+
+
+
+## Chapter 5 Exercises
+
+### Problem 5.1
+
+```{r}
+data("CPS85", package = "mosaicData")
+ggplot(CPS85) +
+ aes(x = sex, y = wage, color = married) +
+ geom_boxplot(shape = "circle") +
+ scale_fill_hue(direction = 1) +
+ theme_bw()
+```
+
+
+
+### Problem 5.2
+
+```{r}
+data("NCHS", package = "dcData")
+ggplot(NCHS) +
+  aes(x = bmi, color = sex) +
+  geom_density(adjust = 1L) +
+  scale_fill_hue(direction = 1) +
+  theme_bw() +
+  facet_wrap(vars(pregnant))
+```
+
+### Problem 5.2
+
+```{r}
+ggplot(CPS85) +
+  aes(x = exper, y = wage, colour = married) +
+  geom_point(shape = "circle", size = 1.5) +
+  scale_color_hue(direction = 1) +
+  theme_bw() +
+  facet_wrap(vars(sector))
+```
+
+
+## Chapter 6 Exercises
+
+### Problem 6.1
+
+1. The labels for the facets is "different surfaces"
+
+2. They have same variables(suspension growth, adhesion growth) as frames but the range of y-axis is different
+
+3. Firstly, the locations are different. Secondly, each glyph has different shape, for example, two of them have stars sign. Besides, the size of them are different because glyph represents different ranges of adhesion growth. 
+
+### Problem 6.2
+
+1. The x-axis represents different genes: genes mapped to horizontal line. The y-axis represents log2 enzyme concentration: enzyme concentration mapped to vertical line. The colors distinguish different molecule: molecule mapped to colors. The solid or hollow types distinguish whether the molecule's flux is positive or negative: flux mapped to solid or hollow. The upper horizontal line represents different targets: target mapped to upper horizontal line.
+
+2. Color(gene), location(molecule, log2 enzyme concentration), solid_or_hollow(flux)
+
+3. molecule and log2 enzyme concentration set the frame
+
+4. gene and target
+
+### Problem 6.3
+
+1. Labels mapped to protein. Dot mapped to center. Range mapped to low and high. Colors mapped to polarity. Stars sign mapped to signif.
+
+2. Horizontal coordinates: protein. Vertical coordinates: log2 ratio cell density
+
+3. Yes, red and blue represent plus and minus polarity respectively.
+
+4. Red and blue represent plus and minus polarity respectively. The number of stars represents how many signif the protein has. Labels represent different proteins. The dot points to the center of value that protein has. 
+
+### Problem 6.4
+
+1. The frame is consisted of time line as horizontal line and different routes as vertical line.
+
+2. Colors represents different transportations. Location represents different starting time. Labels demonstrate different names of transportation. Shapes represents the time span is reserved for walking or waiting or on transportation.
+
+3. 
+* Shape: dotted line represents the time span is reserved for walking or waiting. Solid line represents the time is on trasportation.
+* Position: different positions represents different starting time.
+
+4. A color set represents different types of transportation. A line set represents the meaning of dotted line and solid line.
+
+### Problem 6.5
+
+b
+
+### Problem 6.6
+
+b
+
+### Problem 6.7
+
+b
+
+### Problem 6.8
+
+a, e
+
+### Problem 6.9
+
+```{r}
+data("NCHS", package = "dcData")
+Small <-
+  NCHS %>%
+  sample_n(size=5000)
+ggplot(Small) +
+  aes(x = bmi, y = weight, colour = smoker) +
+  geom_point(shape = "circle", size = 1.5) +
+  scale_color_hue(direction = 1) +
+  theme_minimal()
+```
+
+Red, blue, and gray dot mapped to no, yes, NA of variable smoker respectively. bmi mapped to horizontal line. weight mapped to vertical line.
+
+### Problem 6.10
+
+a: Inner layer represents different organisms. Outer layer represents different PTMs.
+
+b: Inner layer: different lengths. Out layer: different colors.
+
+
+
+
+
+
+
+

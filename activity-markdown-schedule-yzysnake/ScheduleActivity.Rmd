@@ -1,0 +1,28 @@
+---
+title: "R Markdown Schedule"
+author: "Ziyuan Ye"
+date: "September 14, 2021"
+output: html_notebook
+---
+
+# Class Schedule
+
+
+### STAT 184: Introduction to R Programmaing
+
+This is not the first time that I experience with R language. Since I'm major in data science, I already applied and used R language for some projects in other class. I'm glad to take the class this semester cause I can learn R language more systematically.
+
+### RLST 1: World Religious
+
+It introduces various religious in this world in an academic way. Basically, this course overlaps with many concepts related to anthropology, sociology, literary studies, and psychology. The course description is in (<https://bulletins.psu.edu/university-course-descriptions/undergraduate/rlst/>).
+
+
+# Hobby
+
+### Guitar
+
+I learned it by myself since I was 8. I love it because it can help me relive my mood sometimes and keep myself energetic.
+
+![My guitar](https://m.media-amazon.com/images/I/41jIw1mUV4L._AC_.jpg)
+
+

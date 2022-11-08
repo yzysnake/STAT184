@@ -1,0 +1,88 @@
+---
+title: 'Final Project Checklist'
+author: "AUTHOR NAME(S)"
+date: "Due: DATE"
+output: html_notebook
+---
+
+# Purpose
+
+*This document is required to indicate where various requirements can be found within the `Rmd` that produced your Final Project Report.  You must* **indicate line numbers as they appear in your final `Rmd` document** *accompanying each of the following required tasks. Points will be deducted if line numbers are missing or differ significantly from the `Rmd` of your submitted Final Project Report.*  
+
+### Example (for illustration) 
+
+(A) Rmd Line number for title: 2
+
+(B) Rmd Line number for author names: 3
+
+(C) Rmd Line number for due date: 4
+
+# Final Project Requirements
+
+
+### Data Access
+
+*Description: (1) Analysis includes at least two different data sources. (2) Primary data source may NOT be loaded from an R package--though supporting data may. (3) Access to all data sources is contained within the analysis. (4) Imported data is inspected at beginning of analysis using one or more R functions: e.g., str, glimpse, head, tail, names, nrow, etc*
+
+(A) .Rmd Line numbers where at least two different data sources are imported:  31-36
+
+
+(B) .Rmd Line numbers for inspecting data intake: 39-75
+
+
+### Data Wrangling / Cleaning / ect (5 out of 7 required)
+
+
+(A) .Rmd Line number(s) for general data wrangling:  82-97 and more
+
+
+(B) .Rmd Line number(s) for a join operation: 
+
+
+(C) .Rmd Line number(s) for a pivot_wider or pivot_longer operation (or equivalent):
+
+
+(D) .Rmd Line number(s) for use of regular expressions: 
+
+
+(E) .Rmd Line number(s) for use of reduction and/or transformation functions: 55, 64
+
+
+(F) .Rmd Line number(s) for use of user-defined functions: 
+
+
+(G) .Rmd Line number(s) for use of loops and/or control flow: 
+
+
+
+
+
+### Data Visualization (3 of 5 required)
+
+
+(A) .Rmd Line numbers for use of multiple different geoms:  102-132
+
+(B) .Rmd Line number(s) for use of multiple aesthetics:  102-132
+
+(C) .Rmd Line number(s) for use of layered graphics:  133-132
+
+(D) .Rmd Line number(s) for use of leaflet or choropleth maps:  
+
+(E) .Rmd Line number(s) for use of decision tree or dendogram results:    
+
+
+
+
+### Other requirements (Nothing for you to report in this Guidance Document)
+
+(A) *All data visualizations* must be relevant to the stated research question, and the report must include at least one effective display of many--at least 3--variables (excluding maps or decision trees)
+
+(B) *Code quality:* Code formatting is consistent with Style Guide Appendix of DataComputing eBook. Specifically, all code chunks demonstrate proficiency with (1) meaningful object names (2) proper use of white space especially with respect to infix operators, chain operators, commas, brackets/parens, etc (3) use of `<-` assignment operator throughout (4) use of meaningful comments.
+
+(C) *Narrative quality:* The narrative text (1) clearly states one research question that motivates the overall analysis, (2) explains reasoning for each significant step in the analysis and it's relationship to the research question, (3) explains significant findings and conclusions as they relate to the research question, and (4) is completely free of errors in spelling and grammar
+
+(D) *Overall Quality:* Submitted project shows significant effort to produce a high-quality and thoughtful analysis that showcases STAT 184 skills. (2) The project must be self-contained, such that the analysis can be entirely rerun without errors. (3) Analysis is coherent, well-organized, and free of extraneous content such as data dumps, unrelated graphs, and other content that is not overtly connected to the research question.
+
+(E) *GitHub Repo:* (1) At least 6 commits pushed to provided GitHub Repo from top contributor on the project & at least 3 commits from each teammate.  (2) all commits must make a substantive contribution to the project & have an informative commit message that summarizes the contribution (3) Final Project is entirely contained in the provided Repo, including data sources, documents, and anything else that another analyst would need to reproduce your entire analysis.
+
+

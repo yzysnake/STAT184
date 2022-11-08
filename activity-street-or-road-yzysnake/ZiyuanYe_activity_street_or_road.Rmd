@@ -1,0 +1,392 @@
+---
+title: "Street or road"
+author: "Ziyuan Ye"
+date: "November 16 2021"
+output: html_notebook
+---
+
+
+# Set Up
+
+```{r}
+# Load `tidyverse` and `dcData` packages
+rm(list = ls())     # clean up your R environment
+
+# load packages
+library(tidyverse) 
+library(dcData) 
+library(dplyr)
+library(esquisse)
+library(rvest)
+```
+
+
+###* [1 point] Before starting the "Solved Example" State how many addresses are found in BOTH
+```{r}
+download.file(url="https://mdbeckman.github.io/dcSupplement/data/CMS_ProvidersSimple.rds",
+              destfile = "YuruiNiu.rds")
+medicareService <- readRDS("YuruiNiu.rds")
+medicareService%>%
+  summarise(total=n())
+```
+There are 909605 cases in medicare service
+
+
+##* [2 points] Work through the "Solved Example" section showing progress with each step
+1.
+The PO Box cases tend to have a substring “PO”.
+
+2.
+The regular expression for “PO” is simply "PO".
+
+3.
+Find some cases that match:
+```{r}
+Addresses <- read_csv("https://mdbeckman.github.io/dcSupplement/data/street-addresses.csv")
+Addresses%>%
+  summarise(total=n())
+Sample <- 
+  Addresses %>%
+  sample_n(size = 50)
+```
+There are 15483 cases in street name in Wake County, North Carolina.
+
+4.
+Find cases that don’t match:
+```{r}
+Dont <- 
+  Sample %>%
+  filter( !grepl(pattern = "PO", address))
+```
+
+5.
+Find any cases in the Matches that shouldn’t be there (none so far in the excerpt shown). Find any cases in Dont that should have matched, for example we want to try and capture the “NCSU BOX” results among our matches.
+
+6.
+It looks like “BOX” is a better pattern. Since the box number is wanted, the regex should include an identifier for the number inside extraction parentheses. So let’s try "BOX\\s+(\\d+)"
+```{r}
+pattern <- "BOX\\s+(\\d+)"
+Matches <- 
+  Sample %>% 
+  filter(grepl(pattern, address))
+Dont <-
+  Sample %>%
+  filter( !grepl(pattern, address))
+Dont
+```
+```{r}
+BoxNumbers <- 
+  Sample %>%
+  filter(grepl(pattern, address)) %>%
+  tidyr::extract(address, into = "boxnum", regex = pattern)
+BoxNumbers
+```
+
+
+### [2 points] Your Turn #1: explain each line of code in English (either narrative or commented code)
+```{r}
+pattern <- "(ST|RD|ROAD)"
+LeftOvers <-
+  Addresses %>% 
+  filter( !grepl(pattern, address),   #use grepl function and pattern format to tidy the data 
+          !grepl("\\sAPT|UNIT\\s[\\d]+$", address), # use grepl function to find the format of APT, UNIT and [\\d]
+          !grepl(" BOX ", address)    #use grepl function to find the address without "BOX"
+          )
+LeftOvers
+```
+
+### Your Turn #2: expand to match several more patterns (at least 12 total)
+pattern <- "(ST|RD|ROAD|CIRCLE|BLVD|CT|TRAIL|LN|AVENUE|BRIDGE|WAY|DRIVE)"
+
+
+
+### Your Turn #2: provide a table in descending order of popularity for the street name identifiers you found for the combined address pool of Wake County voters and medicare service providers
+```{r}
+BothTables<-
+Addresses%>%
+  inner_join(medicareService)
+BothTables
+```
+
+```{r}
+DR<-
+BothTables%>%
+  filter(grepl( "DR", address))%>%
+  summarise(total=n())
+DR
+
+AVE<-
+BothTables%>%
+  filter(grepl( "AVE", address))%>%
+  summarise(total=n())
+AVE
+
+RD<-
+BothTables%>%
+  filter(grepl( "RD", address))%>%
+  summarise(total=n())
+RD
+
+ST<-
+BothTables%>%
+  filter(grepl( "ST", address))%>%
+  summarise(total=n())
+ST
+
+ROAD<-
+BothTables%>%
+  filter(grepl( "ROAD", address))%>%
+  summarise(total=n())
+ROAD
+
+CIRCLE<-
+BothTables%>%
+  filter(grepl( "CIRCLE", address))%>%
+  summarise(total=n())
+CIRCLE
+
+BLVD<-
+BothTables%>%
+  filter(grepl( "BLVD", address))%>%
+  summarise(total=n())
+BLVD
+
+CT<-
+BothTables%>%
+  filter(grepl( "CT", address))%>%
+  summarise(total=n())
+CT
+
+TRAIL<-
+BothTables%>%
+  filter(grepl( "TRAIL", address))%>%
+  summarise(total=n())
+TRAIL
+
+LN<-
+BothTables%>%
+  filter(grepl( "LN", address))%>%
+  summarise(total=n())
+LN
+
+AVENUE<-
+BothTables%>%
+  filter(grepl( "AVENUE", address))%>%
+  summarise(total=n())
+AVENUE
+
+WAY<-
+BothTables%>%
+  filter(grepl( "WAY", address))%>%
+  summarise(total=n())
+WAY
+
+```
+
+```{r}
+Count_Both<-c(80,3,14,98,1,0,0,0,0,0,0,0)
+Address_identifier_Both<-c("ST","RD","ROAD","CIRCLE","BLVD","CT","TRAIL","LN","AVENUE","BRIDGE","WAY","DRIVE")
+BothData <- data.frame(Address_identifier_Both,Count_Both)
+BothData%>%
+  arrange(desc(Count_Both))
+```
+
+### identifier source of two combine source
+```{r}
+ggplot(BothData) +
+ aes(x = Address_identifier_Both, weight = Count_Both) +
+ geom_bar(fill = "#0c4c8a") +
+ theme_bw()
+```
+
+
+### Your Turn #2: use ggplot to construct a bar chart in descending order of popularity for the street name identifiers you found for Address
+
+```{r}
+DR<-
+Addresses%>%
+  filter(grepl( "DR", address))%>%
+  summarise(total=n())
+DR
+
+AVE<-
+Addresses%>%
+  filter(grepl( "AVE", address))%>%
+  summarise(total=n())
+AVE
+
+RD<-
+Addresses%>%
+  filter(grepl( "RD", address))%>%
+  summarise(total=n())
+RD
+
+ST<-
+Addresses%>%
+  filter(grepl( "ST", address))%>%
+  summarise(total=n())
+ST
+
+ROAD<-
+Addresses%>%
+  filter(grepl( "ROAD", address))%>%
+  summarise(total=n())
+ROAD
+
+CIRCLE<-
+Addresses%>%
+  filter(grepl( "CIRCLE", address))%>%
+  summarise(total=n())
+CIRCLE
+
+BLVD<-
+Addresses%>%
+  filter(grepl( "BLVD", address))%>%
+  summarise(total=n())
+BLVD
+
+CT<-
+Addresses%>%
+  filter(grepl( "CT", address))%>%
+  summarise(total=n())
+CT
+
+TRAIL<-
+Addresses%>%
+  filter(grepl( "TRAIL", address))%>%
+  summarise(total=n())
+TRAIL
+
+LN<-
+Addresses%>%
+  filter(grepl( "LN", address))%>%
+  summarise(total=n())
+LN
+
+AVENUE<-
+Addresses%>%
+  filter(grepl( "AVENUE", address))%>%
+  summarise(total=n())
+AVENUE
+
+WAY<-
+Addresses%>%
+  filter(grepl( "WAY", address))%>%
+  summarise(total=n())
+WAY
+```
+```{r}
+Count_a<-c(948,298,846,984,220,67,61,254,29,177,58,165)
+Address_identifier_a<-c("ST","RD","ROAD","CIRCLE","BLVD","CT","TRAIL","LN","AVENUE","BRIDGE","WAY","DRIVE")
+Address_combine <- data.frame(Address_identifier_a,Count_a)
+Address_combine%>%
+  arrange(desc(Count_a))
+```
+
+
+
+```{r}
+DR<-
+medicareService%>%
+  filter(grepl( "DR", address))%>%
+  summarise(total=n())
+DR
+
+AVE<-
+medicareService%>%
+  filter(grepl( "AVE", address))%>%
+  summarise(total=n())
+AVE
+
+RD<-
+medicareService%>%
+  filter(grepl( "RD", address))%>%
+  summarise(total=n())
+RD
+
+ST<-
+medicareService%>%
+  filter(grepl( "ST", address))%>%
+  summarise(total=n())
+ST
+
+ROAD<-
+medicareService%>%
+  filter(grepl( "ROAD", address))%>%
+  summarise(total=n())
+ROAD
+
+CIRCLE<-
+medicareService%>%
+  filter(grepl( "CIRCLE", address))%>%
+  summarise(total=n())
+CIRCLE
+
+BLVD<-
+medicareService%>%
+  filter(grepl( "BLVD", address))%>%
+  summarise(total=n())
+BLVD
+
+CT<-
+medicareService%>%
+  filter(grepl( "CT", address))%>%
+  summarise(total=n())
+CT
+
+TRAIL<-
+medicareService%>%
+  filter(grepl( "TRAIL", address))%>%
+  summarise(total=n())
+TRAIL
+
+LN<-
+medicareService%>%
+  filter(grepl( "LN", address))%>%
+  summarise(total=n())
+LN
+
+AVENUE<-
+medicareService%>%
+  filter(grepl( "AVENUE", address))%>%
+  summarise(total=n())
+AVENUE
+
+WAY<-
+medicareService%>%
+  filter(grepl( "WAY", address))%>%
+  summarise(total=n())
+WAY
+```
+
+```{r}
+Count_m<-c(107682,185821,159798,327780,24359,1310,68297,13278,				
+625,15423,11220,35286)
+Address_identifier_m<-c("ST","RD","ROAD","CIRCLE","BLVD","CT","TRAIL","LN","AVENUE","BRIDGE","WAY","DRIVE")
+medicare_combine <- data.frame(Address_identifier_m,Count_m)
+medicare_combine%>%
+  arrange(desc(Count_m))
+```
+
+### identifier graph of medicare source
+```{r}
+ggplot(medicare_combine) +
+ aes(x = Address_identifier_m, weight = Count_m) +
+ geom_bar(fill = "#0c4c8a") +
+ theme_bw()
+```
+
+### identifier graph of address source
+```{r}
+ggplot(Address_combine) +
+ aes(x = Address_identifier_a, weight = Count_a) +
+ geom_bar(fill = "#0c4c8a") +
+ theme_bw()
+```
+
+
+## Conclusion
+Both of medicare and addresses use many "circle","road","ST" as end identifier. 
+However, medicare uses many "RD","TRAIL" as identifiers 
+Addresses uses more of "BLVD","LN" and nearly no "AVENUE" as identifiers
+

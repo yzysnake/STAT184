@@ -1,0 +1,81 @@
+---
+title: "Group 18 Final Project: Data Check"
+author: "Omer Canca, Riley Blake, ZiyuanYe"
+date: "November 10 2021"
+output: html_notebook
+---
+
+
+```{r}
+# Load `tidyverse` and `dcData` packages
+rm(list = ls())     # clean up your R environment
+
+# load packages
+library(tidyverse) 
+library(dplyr)
+library(rvest)
+```
+
+
+### Data Source: 
+
+Primary Data Source: obtained from kaggle - Sample of Car Data including multiple variables of car
+
+URL: https://www.kaggle.com/jingbinxu/sample-of-car-data
+
+```{r}
+Cars <- read.csv("car_data.csv")
+```
+
+```{r}
+head(Cars)
+```
+```{r}
+tail(Cars)
+```
+```{r}
+summary(Cars)
+```
+
+```{r}
+glimpse(Cars)
+```
+
+### Examine the data source
+* report what you know (or don't know) about who/what/when/where/why/how the data were originally collected (note: this is NOT about how you found it, etc): The dataset looks straightforward and tidy. 
+
+* choose a few (3-4) key variables to describe (variable types, coding, missingness, summary statistics/plots): There are 205 cases with 23 variables. Each case represents a type of car and its attributes. The key attributes we are looking for are "make", "prices", "engine_size","engine_type", and so on. For example, make states the manufacture of the car, which is a categorical variable. engine_size demonstrates the engine size of a car in inch, which is a numerical attribute. The price is also a numerical attribute in dollars.
+
+### Research Question: What are the key factors that can impacts the price of vehicles?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

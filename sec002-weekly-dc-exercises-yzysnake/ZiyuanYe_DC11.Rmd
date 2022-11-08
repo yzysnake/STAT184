@@ -1,0 +1,199 @@
+---
+title: "STAT 184 Homework Exercises" 
+subtitle: "DataComputing Chapters 11"
+author: "Ziyuan Ye "
+output: html_notebook
+---
+
+## Assigned Exercises
+
+- DC Chapter 11 Exercises: 11.2, 11.3, 11.5, 11.6  
+
+
+## Front Matter
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(mosaic)
+library(tidyverse)
+library(dcData)
+library(esquisse)
+data (ZipDemography)
+data (ZipGeography)
+data(healthIndicator)
+
+```
+
+
+
+## Chapter 11 Exercises
+
+### Problem 11.2
+There is no column is same in both tables.The rows of each table is different. By simply copying long and lat value will be incorrect information.
+
+
+
+### Problem 11.3
+1. 
+2.
+3.
+```{r}
+crowed <-
+  ZipGeography %>%
+  select(ZIP, Latitude, Longitude)%>%
+  filter("Population" > 50000)
+```
+
+```{r}
+ggplot(crowed) +
+  aes(x = Latitude, y = Longitude) +
+  geom_point(shape = "circle", size = 1.5, colour = "#112446") +
+  theme_bw()
+```
+
+
+4.
+i. 
+```{r}
+  ZipGeography %>%
+  left_join(ZipDemography) %>%
+  group_by(State) %>%
+  summarise(sum(Vacanthousingunits, na.rm = TRUE) / sum(Totalhousingunits, na.rm = TRUE) )
+```
+
+ii.
+```{r}
+  ZipGeography %>%
+  left_join(ZipDemography) %>%
+  group_by(State) %>%
+  summarise(sum(X65yearsandover, na.rm = TRUE)/sum(Population, na.rm = TRUE) )
+```
+
+iii.
+```{r}
+  ZipGeography %>%
+  left_join(ZipDemography) %>%
+  group_by(State) %>%
+  summarise(sum(Bachelorsdegreeorhigher, na.rm = TRUE)/sum(Population, na.rm = TRUE) )
+```
+
+
+5.
+```{r}
+new_crowed <-
+  ZipGeography %>%
+  left_join(ZipDemography) %>%
+  mutate(fraction = sum(X65yearsandover, na.rm = TRUE)/sum(Population, na.rm = TRUE))%>%
+  arrange(Population, na.rm = TRUE)%>%
+  select(ZIP, Latitude, Longitude, fraction)%>%
+  head(10000)
+```
+
+```{r}
+ggplot(new_crowed) +
+  aes(x = Latitude, y = Longitude, colour = fraction) +
+  geom_point(shape = "circle", size = 1.5) +
+  scale_color_gradient() +
+  theme_bw()
+```
+
+
+6.
+```{r}
+new_crowed2 <-
+  ZipGeography %>%
+  left_join(ZipDemography) %>%
+  filter(WaterArea > 1.5 * LandArea)%>%
+  select(ZIP, Latitude, Longitude, Population)
+```
+
+```{r}
+ggplot(new_crowed2) +
+  aes(x = Latitude, y = Longitude, colour = Population) +
+  geom_point(shape = "circle", size = 1.5) +
+  scale_color_gradient() +
+  theme_bw()
+```
+
+
+### Problem 11.5
+1.
+```{r}
+ZipDemography %>%
+  summarise(count = n_distinct(Countries))
+```
+
+2.
+```{r}
+ZipGeography %>%
+  left_join(ZipDemography) %>%
+  group_by(CityName) %>% 
+  summarise(count=n())%>%
+  arrange(desc(count))
+```
+
+3.
+```{r}
+StatePopulation <-
+ZipGeography %>%
+  group_by(State) %>% 
+  summarise(State_population = sum(Population, na.rm = TRUE))
+```
+
+```{r}
+ZipGeography %>%
+  left_join(StatePopulation) %>%
+  filter(Population > 0.05 * State_population)%>%
+  select(ZIP,CityName)
+```
+
+4.
+```{r}
+ZipGeography %>%
+  group_by(State,Timezone)%>%
+  summarise()
+```
+
+5.
+```{r}
+ZipGeography %>%
+  group_by(State,CityName,Timezone)%>%
+  summarise()
+```
+
+6.
+```{r}
+ZipGeography %>%
+  group_by(State,County,Timezone)%>%
+  summarise()
+```
+
+
+### Problem 11.6
+```{r}
+healthIndicator <- dcData::CountryData
+```
+
+1.
+Using left join on (countryB = origincode, countryA = destcode, Y2000 = toAfromB)
+
+2.
+Using left join on (countryA = destcode, countryB = origincode, Y2000 = toAfromB)
+
+3.
+Using left join on (countryA = iso_a3, infantA = infant)
+
+4.
+Using left join on (countryB = iso_a3, infantB = infant)
+
+
+
+
+
+
+
+
+

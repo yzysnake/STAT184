@@ -1,0 +1,32 @@
+---
+title: "R Markdown Schedule (Example)"
+author: "Thilini Saram"
+date: "September 10, 2021"
+output: html_notebook
+---
+
+# Class Schedule
+
+### STAT 184: Introduction to R Programmaing
+
+This is the first time I am teaching STAT 184. I think this is a very useful course for Statistics and Data Science undergraduates to learn R programming and Git. This course was introduced by Dr. Beckman who is teaching section 3 & 4 this time. His approach to teach R programming to students is using the `tidyverse` packages because he believes this to be a more unified and intuitive approach to the language (<https://www.tidyverse.org/>). This is an interesting experience for me as well and I also learnt new tools in GitHub due to this course. This is the favorite course I taught so far!
+
+![Tidyverse packages (source: RStudio Education)](tidyverse.png)
+
+### STAT 557: Data Mining
+
+This is a course I am taking this time. This is a useful course for student who wants to work in Data Science related fields. This course covers topic such as Generalized additive models and Classification and regression trees (CART), Random Forest, Cluster analysis, and Support Vector machine. This course requires us to do 3 projects related to these topic. The course description can be found in (<https://bulletins.psu.edu/university-course-descriptions/graduate/stat/>).
+
+![Statistics Concepts (source: online.stat.psu.edu)](https://online.stat.psu.edu/statprogram/sites/statprogram/files/2018-08/statistics-review.jpg)
+
+
+# Hobbies, Jobs, etc
+
+### Chess
+
+Playing chess was my favorite hobby from my childhood. However, I couldn't keep up with this hobby as a graduate student. But when I was in school, and in the undergraduate university I played a lot of team tournaments. This was a good experience for me to learn chess as well as have fun time participating tournaments in different provinces of my country, Sri Lanka. 
+(A recent news article regarding chess in Sri Lanka:  <https://www.newsfirst.lk/2021/09/03/oshini-becomes-world-youth-chess-champion/>).
+
+![Chess logo (source: Fide.com)](chess.png)
+
+

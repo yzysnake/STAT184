@@ -1,0 +1,168 @@
+---
+title: "STAT 184 Homework Exercises" 
+subtitle: "DataComputing Chapters 10"
+author: "Ziyuan Ye "
+output: html_notebook
+---
+
+## Assigned Exercises
+
+- DC Chapter 7 Exercises: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7  
+
+## Front Matter
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(mosaic)
+library(tidyverse)
+library(ggplot2)
+
+data("diamonds",package="ggplot2")
+data("BabyNames",package = "dcData")
+data("Minneapolis2013",package = "dcData")
+```
+
+
+
+## Chapter 10 Exercises
+
+### Problem 10.1
+1. summary function
+2. data verb
+3. transformation function
+4. reduction function
+5. data verb
+6. summary function
+7. data verb
+8. summary function
+
+
+### Problem 10.2
+a. mutate()
+b. arrange()
+c. filter()
+d. select()
+e. select(), group_by()
+
+
+### Problem 10.3
+1. nrow()
+2. ls()
+3. View()
+4. library()
+5. group_by()
+
+
+### Problem 10.4
+1.
+```{r}
+BabyNames%>%
+  filter(sex=="F")%>%
+  arrange(name)
+```
+
+2.
+```{r}
+BabyNames%>%
+  filter(sex=="F")
+```
+
+3.
+```{r}
+BabyNames%>%
+  filter(name=="Yadriel"|name=="Ferdie",year==2012|year==1915)%>%
+  arrange(desc(count))
+```
+
+4.
+```{r}
+BabyNames%>%
+  summarise(count=n())
+```
+
+5.
+```{r}
+BabyNames%>% 
+  select(name,count)%>% 
+  arrange(count)
+```
+
+
+### Problem 10.5
+1.
+Using filter() to find the people who vote the same person for first and second. Then, using n() to find the total number. The result is 1910.
+```{r}
+Minneapolis2013 %>%
+  filter(First == Second)%>%
+  summarise(total=n())
+```
+2.
+Firstly group by First and Second and by using filter() to find out the candidate same as first and second. Using n() to find the total name. Finally we are looking for the top three by descending order.
+```{r}
+Minneapolis2013 %>%
+  group_by(First, Second) %>%
+  filter(First == Second)%>%
+  summarise(total=n())%>%
+  arrange(desc(total))%>%
+  head(3)
+```
+
+3.
+Firstly group by Second. Then check where First equals to "Ole Savior". And summarise each group in Second by its number. Finally we are looking for the top three by descending order.
+```{r}
+Minneapolis2013 %>%
+  group_by(Second)%>%
+  filter(First == "Ole Savior")%>%
+  summarise(total = n())%>%
+  arrange(desc(total))%>%
+  head(3)
+```
+
+
+### Problem 10.6
+1.
+```{r}
+diamonds %>% 
+  group_by(color) %>% 
+  summarise(weight=mean(carat))%>%
+  arrange(desc(weight)) %>% 
+  head(1)
+```
+
+2.
+```{r}
+diamonds %>% 
+  group_by(clarity) %>% 
+  summarise(result=mean(table/carat))%>%
+  arrange(desc(result)) %>% 
+  head(1)
+```
+
+
+### Problem 10.7
+```{r}
+new_data<-
+  Minneapolis2013 %>%
+    group_by(First) %>%
+    summarise(total=n())%>%
+    filter(total <= 5000) 
+new_data <-
+  new_data %>%
+  select(First)
+  
+avector <- new_data[['First']]
+
+Minneapolis2013_new <- Minneapolis2013 %>%                              
+  mutate(First = replace(First, First %in% avector, "minor")) %>%
+  mutate(Second = replace(Second, Second %in% avector, "minor")) %>%
+  mutate(Third = replace(Third, Third %in% avector, "minor"))
+```
+
+```{r}
+Minneapolis2013_new %>%
+  head(10)
+```
+

@@ -1,0 +1,54 @@
+---
+title: "Activity: Popular Names"
+author: "Ziyuan Ye"
+date: "October 4 2021"
+output: html_notebook
+---
+
+
+
+# Set Up
+
+```{r}
+# load necessary packages
+library(tidyverse)
+library(mosaic)
+library(dcData)
+```
+
+
+```{r}
+# Load the BabyNames data into RStudio environment (from dcData package)
+data("BabyNames")
+
+```
+
+# Activity
+
+**Goal**: By the end of the activity, each person will create a graph showing ups and downs in the popularity of four names according to the U.S. social security administration  
+
+
+### Step 1
+The case is the number of baby name occured, variables are: name, sex, count, and year.
+
+
+### Step 3
+The glyph-ready data table should consist of all the variables. “Popularity” is a new variable by certain name count in the certain year. “Popularity” is the y-axis, "year" is the x-axis. “name” variable is an aesthetic for the legend.
+
+* “sex” and “count” does not appear in the graph 
+* “Popularity” is similar to ’count"
+
+### Step 4
+
+
+
+### Step 5
+
+
+
+### Step 7: modify the starter code given in the book to produce your own R code..
+
+
+
+
+

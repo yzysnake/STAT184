@@ -1,0 +1,71 @@
+---
+title: 'Activity: Popular Names'
+author: "Ziyuan Ye"
+date: "October 4 2021"
+output: html_notebook
+---
+
+
+
+# Set Up
+
+```{r}
+# load necessary packages
+library(tidyverse)
+library(mosaic)
+library(dcData)
+```
+
+
+```{r}
+# Load the BabyNames data into RStudio environment (from dcData package)
+data("BabyNames")
+
+```
+
+# Activity
+
+**Goal**: By the end of the activity, each person will create a graph showing ups and downs in the popularity of four names according to the U.S. social security administration  
+
+
+### Step 1
+The case is the number of baby name occured, variables are: name, sex, count, and year.
+
+
+### Step 3
+The glyph-ready data table should consist of all the variables. “Popularity” is a new variable by certain name count in the certain year. “Popularity” is the y-axis, "year" is the x-axis. “name” variable is an aesthetic for the legend.
+
+* “sex” and “count” does not appear in the graph 
+* “Popularity” is similar to ’count"
+
+
+### Step 4
+* All the names besides “Abraham” “Franklin” and “Woodrow” have been filtered out.
+* group_by(name,year) to figure out the count of each name in each year. And summarize each count as popularity.
+* New variable “Popularity” has been introduced. Popularity equals to the sum of count of both male and female
+
+
+### Step 5
+Firstly, group by name and year to determine each name and year's combination. Then using summarise fucntion to count number of names in terms of male and female. Finally filter out the baby names besides "Peter", "Linda", "Emma", and "Harrison".
+
+
+### Step 7: modify the starter code given in the book to produce your own R code.
+```{r}
+Popular_name <-BabyNames%>%
+  group_by(name,year)%>%
+  summarise(popularity = sum(count))%>%
+  filter(name == "Peter"| name == "Linda" |name =="Emma"| name == "Harrison") 
+```
+
+```{r}
+Popular_name %>% 
+  ggplot(aes(x = year, y = popularity, group = name)) +
+  geom_line( size = 1, alpha = 0.5, aes(color = name)) +
+  ylab("Popularity") + xlab("Year")
+```
+
+
+
+
+
+
